@@ -1,10 +1,10 @@
 /**@jsxImportSource @emotion/react */
-import { FiChevronsRight } from 'react-icons/fi';
-import { mainSidebarIsOpenState } from '../../atoms/mainSidebar/mainSidebarAtom';
+import { useRecoilState } from 'recoil';
 import * as s from './style';
 import React from 'react';
-import { basicButton } from '../../styles/buttons';
-import { useRecoilState } from 'recoil';
+import { mainSidebarIsOpenState } from '../../../atoms/mainSidebar/mainSidebarAtom';
+import { FiChevronsRight } from 'react-icons/fi';
+import { basicButton } from '../../../styles/buttons';
 
 function MainContainer({ children }) {
     const [ isOpen, setOpen ] = useRecoilState(mainSidebarIsOpenState);
@@ -12,11 +12,12 @@ function MainContainer({ children }) {
     const handleSidebarOpen = () => {
         setOpen(true)
     }
+
     return (
         <div css={s.container}>
-            <header css={s.header}> 
+            <header css={s.header}>
                 {
-                    !isOpen &&
+                    !isOpen && 
                     <span css={s.sidebarOpenButton}>
                         <button css={basicButton} onClick={handleSidebarOpen}><FiChevronsRight /></button>
                     </span>

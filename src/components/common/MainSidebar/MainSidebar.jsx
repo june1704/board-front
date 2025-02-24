@@ -2,9 +2,9 @@
 import * as s from './style';
 import React from 'react';
 import { FiChevronsLeft } from "react-icons/fi";
-import { basicButton, emptyButton } from '../../styles/buttons';
-import { mainSidebarIsOpenState } from '../../atoms/mainSidebar/mainSidebarAtom';
+import { basicButton, emptyButton } from '../../../styles/buttons';
 import { useRecoilState } from 'recoil';
+import { mainSidebarIsOpenState } from '../../../atoms/mainSidebar/mainSidebarAtom';
 import { LuLockKeyhole } from "react-icons/lu";
 
 function MainSidebar(props) {
@@ -29,6 +29,7 @@ function MainSidebar(props) {
                         <button css={basicButton} onClick={handleSidebarClose}><FiChevronsLeft /></button>
                     </div>
                 </div>
+                
             </div>
         </div>
     );

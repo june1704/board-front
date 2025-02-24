@@ -22,31 +22,6 @@ export const title2 = css`
     cursor: default;
 `;
 
-export const groupBox = css`
-    box-sizing: border-box;
-    padding: 0.6rem 0;
-    width: 32.6rem;
-`;
-
-export const textInput = css`
-    box-sizing: border-box;
-    outline: none;
-    border: 0.1rem solid #dbdbdb;
-    border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
-    width: 100%;
-    height: 3.4rem;
-    background-color: transparent;
-
-    font-size: 1.4rem;
-    letter-spacing: 0.1rem;
-
-    
-    &:focus {
-        box-shadow: 0rem 0rem 0.3rem 0.3rem #7edaff;
-    }
-`;
-
 export const accountMessage = css`
     font-size: 1.2rem;
     color: #777777;
