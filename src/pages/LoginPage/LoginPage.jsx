@@ -1,10 +1,72 @@
 /**@jsxImportSource @emotion/react */
 import * as s from './style';
-import React from 'react';
+import React, { useState } from 'react';
 import { SiGoogle, SiKakao, SiNaver } from "react-icons/si";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import ValidInput from '../../components/auth/ValidInput/ValidInput';
+import { useLoginMutation } from '../../mutauions/authMutation';
+import Swal from 'sweetalert2'
+import { setTokenLocalStorage } from '../../configs/axiosConfig';
+import { useUserMeQuery } from '../../queries/userQuery';
+
 
 function LoginPage(props) {
+    const navigate = useNavigate();
+    const loginMutation = useLoginMutation();
+    const loginUser = useUserMeQuery();
+
+    const [ searchParams, setSearchParams ] = useSearchParams();
+    
+    const [ inputValue, setInputValue ] = useState({
+        username: searchParams.get("username") || "",
+        password: "",
+    })
+
+    const handleInputOnChange = (e) => {
+        setInputValue(prev => ({
+            ...prev,
+            [e.target.name]: e.target.value,
+        }));
+    }
+
+    const [ inputValidError, setInputValidError ] = useState({
+        username: false,
+        password: false,
+    });
+
+    const handlePasswordOnFocus = () => {
+        setInputValue(prev => ({
+            ...prev,
+            password: "",
+        }));
+    }
+
+    const handleLoginOnClick = async () => {
+        try {
+            const response = await loginMutation.mutateAsync(inputValue);
+            const tokenName = response.data.name;
+            const accessToken = response.data.token;
+            setTokenLocalStorage(tokenName, accessToken);
+            await Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "로그인 성공!",
+                timer: 1000,
+                showConfirmButton: false,
+              });
+              loginUser.refetch();
+              navigate("/");
+        } catch(error) {
+            await Swal.fire({
+                title: '에러',
+                text: '당신은 로그인이 실패해서 죽었습니다',
+                confirmButtonText: '부활?',
+                confirmButtonColor: '#2383e2'
+              })
+
+        }
+    }
+
     return (
         <div css={s.layout}>
             <div>
@@ -35,16 +97,27 @@ function LoginPage(props) {
                     </div>
                     <div>
                         <div css={s.groupBox}>
-                            <input css={s.textInput} type="text" placeholder='Enter your email address...' />
+                            <ValidInput type={"text"} placeholder={"Enter your username..."}
+                                name={"username"}
+                                value={inputValue.username}
+                                onChange={handleInputOnChange}
+                                setInputValueError={setInputValidError}
+                            />
                         </div>
                         <div css={s.groupBox}>
-                            <input css={s.textInput} type="password" placeholder='password...' />
+                            <ValidInput type={"password"} placeholder={"password..."}
+                                name={"password"}
+                                value={inputValue.password}
+                                onChange={handleInputOnChange}
+                                onFocus={handlePasswordOnFocus}
+                                setInputValueError={setInputValidError}
+                            />
                         </div>
                         <p css={s.accountMessage}>
                             계정이 없으시다면 지금 가입하세요. <Link to={"/auth/join"}>회원가입</Link>
                         </p>
                         <div css={s.groupBox}>
-                            <button css={s.accountButton}>Login</button>
+                            <button css={s.accountButton} onClick={handleLoginOnClick}>Login</button>
                         </div>
                     </div>
                 </main>

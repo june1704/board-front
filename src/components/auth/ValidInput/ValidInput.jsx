@@ -3,19 +3,23 @@ import * as s from './style';
 import React, { useState } from 'react';
 
 function ValidInput({
-    type,
-    name,
-    placeholder,
+    type = "text",
+    name = "",
+    placeholder = "",
     value,
-    onChange,
+    onChange = null,
     onFocus = null,
-    regexp, 
-    errorMessage,
-    inputValidError,
-    setInputValueError
+    regexp = null, 
+    errorMessage = "",
+    inputValidError = null,
+    setInputValueError = null
 }) {
 
     const handleOnBlur = () => {
+        if(!regexp) {
+            return;
+        }
+
         setInputValueError(prev => ({
             ...prev,
             [name]: !regexp.test(value),
@@ -34,6 +38,7 @@ function ValidInput({
                 onBlur={handleOnBlur}
             />
             {
+                !!inputValidError &&
                 !!inputValidError[name] &&
                 <p css={s.messageText}>{errorMessage}</p>
             }
