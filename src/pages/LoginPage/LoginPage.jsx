@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { SiGoogle, SiKakao, SiNaver } from "react-icons/si";
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import ValidInput from '../../components/auth/ValidInput/ValidInput';
-import { useLoginMutation } from '../../mutauions/authMutation';
+import { useLoginMutation, useSendAuthMailMutation } from '../../mutauions/authMutation';
 import Swal from 'sweetalert2'
 import { setTokenLocalStorage } from '../../configs/axiosConfig';
 import { useQueryClient } from '@tanstack/react-query';
@@ -14,6 +14,7 @@ function LoginPage(props) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const loginMutation = useLoginMutation();
+    const sendAuthMailMutation = useSendAuthMailMutation();
 
     const [ searchParams, setSearchParams ] = useSearchParams();
     
@@ -57,15 +58,40 @@ function LoginPage(props) {
               await queryClient.invalidateQueries({queryKey: ["userMeQuery"]});
               navigate("/");
         } catch(error) {
-            await Swal.fire({
-                title: '에러',
-                text: '당신은 로그인이 실패해서 죽었습니다',
-                confirmButtonText: '부활?',
-                confirmButtonColor: '#2383e2'
-              })
-
+            if(error.response.status === 401) {
+                const result = await Swal.fire({
+                    title: '계정 활성화',
+                    text: '계정을 활성화 하려면 등록하신 메일을 통해 계정 인증을 하세요. 다시 메일 전송이 필요하면 전송버튼을 클릭하세요.',
+                    confirmButtonText: '전송',
+                    confirmButtonColor: '#2383e2',
+                    showCancelButton: true,
+                    cancelButtonText: '취소',
+                    cancelButtonColor: '#999999'
+                });
+                if(result.isConfirmed) {
+                    await sendAuthMailMutation.mutateAsync(inputValue.username)
+                    await Swal.fire({
+                        title: '메일 전송 완료',
+                        confirmButtonText: '확인',
+                        confirmButtonColor: '#2383e2',
+                })
+                
+            } else {
+                await Swal.fire({
+                    title: '400에러',
+                    text: '당신은 로그인이 실패해서 죽었습니다',
+                    confirmButtonText: '부활?',
+                    confirmButtonColor: '#2383e2'
+                });
+            }
         }
     }
+    }
+
+    const handleOAuth2LoginOnClick =(provider) => {
+        window.location.href = `http://localhost:8080/oauth2/authorization/${provider}`;
+    }
+
 
     return (
         <div css={s.layout}>
@@ -77,13 +103,13 @@ function LoginPage(props) {
                 <main>
                     <div css={s.oauth2Group}>
                         <div css={s.groupBox}>
-                            <button css={s.oauth2Button}>
+                            <button css={s.oauth2Button} onClick={() => handleOAuth2LoginOnClick("google")}>
                                 <div css={s.oauth2Icon}><SiGoogle /></div>
                                 <span css={s.oauth2Text}>Continue with Google</span>
                             </button>
                         </div>
                         <div css={s.groupBox}>
-                            <button css={s.oauth2Button}>
+                            <button css={s.oauth2Button} onClick={() => handleOAuth2LoginOnClick("naver")}>
                                 <div css={s.oauth2Icon}><SiNaver /></div>
                                 <span css={s.oauth2Text}>Continue with Naver</span>
                             </button>
