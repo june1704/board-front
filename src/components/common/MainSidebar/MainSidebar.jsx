@@ -7,15 +7,18 @@ import { useRecoilState } from 'recoil';
 import { mainSidebarIsOpenState } from '../../../atoms/mainSidebar/mainSidebarAtom';
 import { LuLockKeyhole } from "react-icons/lu";
 import { useNavigate } from 'react-router-dom';
-import { BiLogOut } from 'react-icons/bi';
+import { BiEdit, BiLogOut } from 'react-icons/bi';
 import { setTokenLocalStorage } from '../../../configs/axiosConfig';
 import { useQueryClient } from '@tanstack/react-query';
+import Swal from 'sweetalert2';
+import { useGetCategories } from '../../../queries/boardQuery';
 
 function MainSidebar(props) {
     const navigate = useNavigate();
     const [ isOpen, setOpen ] = useRecoilState(mainSidebarIsOpenState);
     const queryClient = useQueryClient();
     const loginUserData = queryClient.getQueryData(["userMeQuery"]);
+    const categories = useGetCategories();
 
     const handleSidebarClose = () => {
         setOpen(false);
@@ -33,6 +36,20 @@ function MainSidebar(props) {
         setTokenLocalStorage("AccessToken", null);
         await queryClient.invalidateQueries({queryKey: ["userMeQuery"]});
         navigate("/auth/login");
+    }
+
+    const handleWriteOnClick = async () => {
+        const categoryData = await Swal.fire({
+           title: "카테고리명을 입력하세요",
+           input: "text",
+           inputPlaceholder: "Enter category name...",
+           showCancelButton: true,
+           confirmButtonText: "작성하기",
+           cancelButtonText: "취소하기"
+        });
+        if(categoryData.isConfirmed) {
+            navigate(`/board/write/${categoryData.value}`);
+        }
     }
 
     return (
@@ -54,6 +71,40 @@ function MainSidebar(props) {
                             <button css={basicButton} onClick={handleSidebarClose}><FiChevronsLeft /></button>
                         </div>
                     </div>
+                    <div css={s.groupLayout}>
+                        <button css={emptyButton}>
+                            <span>
+                                전체 게시글
+                            </span>
+                        </button>
+                    </div>
+                    <div css={s.groupLayout}>
+                        <button css={emptyButton}>
+                            <span>
+                                공지사항
+                            </span>
+                        </button>
+                    </div>
+                    <div css={s.groupLayout}>
+                        <div css={s.categoryItem}>
+                            <button css={emptyButton}>내가 작성한 글</button>
+                            <button css={basicButton} onClick={handleWriteOnClick}><BiEdit /></button>
+                        </div>
+                    </div>
+                </div>
+                <div css={s.categoryListContainer}>
+                    {
+                        categories.isLoading ||
+                        categories.data.data.map(category =>
+                            <div css={s.groupLayout}>
+                                <div css={s.categoryItem}>
+                                    <button css={emptyButton}>{categoryItem.boardVategoryName}({category.boardCount})</button>
+                                    <button css={basicButton}><BiEdit /></button>
+                                </div>
+                            </div>
+
+                        )
+                    }
                 </div>
                 <div>
                     <div css={s.groupLayout}>
