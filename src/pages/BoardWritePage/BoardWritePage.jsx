@@ -15,7 +15,7 @@ function BoardWritePage(props) {
     const [ title, setTitle ] = useState("");
     const [ quillContent, setQuillContent ] = useState("");
 
-    useEffect (() => {
+    useEffect(() => {
         console.log(params.categoryName);
         console.log(quillContent);
     }, [quillContent]);
@@ -25,7 +25,7 @@ function BoardWritePage(props) {
         const toolbarOptions = [
             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
             [{ 'font': [] }, 'bold', 'italic', 'underline', 'strike'],
-            [{ 'color': [] }, { 'background': [] }, { 'align': [] }],
+            [{ 'color': [] }, { 'background': [] }, { 'align': [] }],          // dropdown with defaults from theme
             ['link', 'image', 'video', 'formula'],
         ];
 
@@ -47,7 +47,7 @@ function BoardWritePage(props) {
     const handleTitleOnChange = (e) => {
         setTitle(e.target.value);
     }
-    
+
     const handleSaveOnClick = async () => {
         if(!title.trim()) {
             await Swal.fire({
@@ -56,7 +56,6 @@ function BoardWritePage(props) {
             });
             return;
         }
-
         if(!quill.root.innerText.trim()) {
             await Swal.fire({
                 titleText: "게시글 내용을 입력하세요.",
@@ -74,10 +73,10 @@ function BoardWritePage(props) {
         const response = await createBoardMutation.mutateAsync(board);
         await Swal.fire({
             titleText: "게시글 작성 완료",
-            confirmButtonText: "확인", 
+            confirmButtonText: "확인",
         });
     }
-
+    
     return (
         <div css={s.quillEditor}>
             <div css={s.quillTop}>
