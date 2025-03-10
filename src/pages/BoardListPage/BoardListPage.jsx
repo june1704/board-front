@@ -71,8 +71,10 @@ function BoardListPage(props) {
         setSearchParams(searchParams);
     }
 
-    const handleSearchInputOnKeyDown = () => {
-        
+    const handleSearchInputOnKeyDown = (e) => {
+        if(e.keyCode === 13) {
+            handleSearchButtonOnClick();
+        }
     }
 
     return (
