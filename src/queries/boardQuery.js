@@ -9,7 +9,7 @@ export const useGetCategories = () => useQuery({
     gcTime: 1000 * 60 * 5
 });
 
-export const useGetSearchBoardList = () => useQuery({
+export const useGetSearchBoardList = (params) => useQuery({
     queryKey: ["useGetSearchBoardList"],
     queryFn: async () => {
         const params = {

@@ -176,11 +176,11 @@ export const footer = css`
     padding: 1rem;
 `;
 
-export const pageNumbers = (isSelect) => css`
+export const pageNumbers = css`
     display: flex;
     width: 25rem;
 
-    & > div {
+    & > button {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -193,18 +193,22 @@ export const pageNumbers = (isSelect) => css`
         font-weight: 600;
         font-size: 1.5rem;
         cursor: pointer;
-
+        background-color: #ffffff;
+        
         &:hover {
+            background-color: #eeeeee;
+        }
+        
+        &:disabled {
             background-color: #fafafa;
         }
 
         & > span {
             margin-bottom: 0.1rem;
         }
-
     }
 `;
 
 export const pageNum = (isSelect) => css`
-    background-color: ${isSelect ? "#eeeeee" : "#ffffff"};
+    background-color: ${isSelect ? "#eeeeee" : "#ffffff"} !important; // 우선순위 높임
 `;
