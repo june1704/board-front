@@ -45,6 +45,7 @@ function MainSidebar(props) {
                 confirmButtonText: "작성하기",
                 cancelButtonText: "취소하기"
             });
+            
             if(categoryData.isConfirmed) {
                 categoryName = categoryData.value;
             } else {

@@ -23,7 +23,7 @@ function BoardListPage(props) {
     });
 
     const [ pageNumbers, setPageNumbers ] = useState([]);
-    const [ searchInputValue, setSearchInputValue ] = useState("");
+    const [ searchInputValue, setSearchInputValue ] = useState(searchText);
 
     const orderSelectOptions = [
         {label: "최근 게시글", value: "recent"},
@@ -38,12 +38,11 @@ function BoardListPage(props) {
         if(!searchBoardList.isLoading) {
             const currentPage = searchBoardList?.data?.data.page || 1;
             const totalPages = searchBoardList?.data?.data.totalPages || 1;
-            // console.log(currentPage, totalPages);
-            const startIndex =Math.floor((currentPage - 1) / 5) * 5 + 1;
+            const startIndex = Math.floor((currentPage - 1) / 5) * 5 + 1;
             const endIndex = startIndex + 4 > totalPages ? totalPages : startIndex + 4;
 
-            let newPageNumbers =[];
-            for(let i = startIndex; i <= endIndex; i++) {
+            let newPageNumbers = [];
+            for (let i = startIndex; i <= endIndex; i++) {
                 newPageNumbers = [...newPageNumbers, i]
             }
             setPageNumbers(newPageNumbers);
@@ -54,23 +53,26 @@ function BoardListPage(props) {
         searchBoardList.refetch();
     }, [searchParams]);
 
+    // 현재페이지 변경
     const handlePageNumbersOnClick = (pageNumber) => {
         searchParams.set("page", pageNumber);
         setSearchParams(searchParams);
     }
 
+    // orderSelectOptions의 변수값이 바뀜
     const handleSelectOnChange = (option) => {
         searchParams.set("order", option.value);
         setSearchParams(searchParams);
     }
     
-    // 검색창에 쳤을 때 페이지 수가 1로 변하고 찾음
+    // 검색창에 쳤을 때 페이지 수가 1로 변하고 내가 입력한 텍스트 찾음
     const handleSearchButtonOnClick = () => {
         searchParams.set("page", 1);
         searchParams.set("searchText", searchInputValue);
         setSearchParams(searchParams);
     }
 
+    // 검색창 엔터 치면 바뀜
     const handleSearchInputOnKeyDown = (e) => {
         if(e.keyCode === 13) {
             handleSearchButtonOnClick();
